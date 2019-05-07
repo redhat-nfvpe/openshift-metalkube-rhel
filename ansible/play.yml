@@ -1,0 +1,15 @@
+---
+- name: config
+  hosts: all
+  connection: local
+  vars:
+    openshift_kubeconfig_path: '/root/.kube/config'
+    openshift_node_tls_verify: true
+  vars_files:
+    - defaults/main.yml
+  gather_facts: True
+  tasks:
+    - name: Install
+      include_tasks: tasks/install.yml
+    - name: Configure
+      include_tasks: tasks/config.yml
