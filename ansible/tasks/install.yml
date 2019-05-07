@@ -1,20 +1,18 @@
 ---
-- name: Enable internal repo for CRI-o
+- name: Enable internal repos
   yum_repository:
-    name: crio
-    description: CRI-O repo
-    baseurl: https://cbs.centos.org/repos/paas7-crio-113-candidate/x86_64/os
+    name: "{{ item.name }}"
+    description: "{{ item.description }}"
+    baseurl: "{{ item.baseurl }}"
     enabled: yes
     gpgcheck: no
-
-- name: Enable internal repo for hyperkube
-  yum_repository:
-    name: hyperkube
-    description: Hyperkube repo
-    baseurl: https://rpms.svc.ci.openshift.org/openshift-origin-v4.1/
-    enabled: yes
-    gpgcheck: no
-
+  with_items:
+    - name: crio
+      description: CRI-O repo
+      baseurl: https://cbs.centos.org/repos/paas7-crio-113-candidate/x86_64/os
+    - name: hyperkube
+      description: Hyperkube repo
+      baseurl: https://rpms.svc.ci.openshift.org/openshift-origin-v4.1/
 - name: Install openshift support packages
   package:
     name: "{{ openshift_node_support_packages | join(',') }}"
