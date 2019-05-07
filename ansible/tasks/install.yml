@@ -1,4 +1,12 @@
 ---
+- name: Enable internal repo
+  yum_repository:
+    name: crio
+    description: CRI-O repo
+    baseurl: https://cbs.centos.org/repos/paas7-crio-113-candidate/x86_64/os
+    enabled: yes
+    gpgcheck: no
+
 - name: Install openshift support packages
   package:
     name: "{{ openshift_node_support_packages | join(',') }}"
