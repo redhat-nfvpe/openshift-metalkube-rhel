@@ -13,6 +13,12 @@
     - name: hyperkube
       description: Hyperkube repo
       baseurl: https://rpms.svc.ci.openshift.org/openshift-origin-v4.1/
+
+- name: Install remote runc
+  dnf:
+    name: 'https://rpmfind.net/linux/fedora/linux/updates/28/Everything/x86_64/Packages/r/runc-1.0.0-83.dev.gitf56b4cb.fc28.x86_64.rpm'
+    state: present
+
 - name: Install openshift support packages
   package:
     name: "{{ openshift_node_support_packages | join(',') }}"
