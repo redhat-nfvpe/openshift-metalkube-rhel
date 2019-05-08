@@ -5,15 +5,15 @@ source $HOME/settings.env
 IGNITION_ENDPOINT="https://api.${CLUSTER_NAME}.${BASE_DOMAIN}:22623/config/worker"
 
 cat > .cloudinit.tmp << EOF
+#cloud-config
 write_files:
-- path: /tmp/pull.json
-  content: |
-    $PULL_SECRET
-- path: /root/.kube/config
-  encoding: b64
-  content: $(cat ocp/auth/kubeconfig | base64)
-- path: /tmp/ignition_endpoint
-  content: $IGNITION_ENDPOINT
+-   path: /tmp/pull.json
+    content: $PULL_SECRET
+-   path: /root/.kube/config
+    encoding: b64
+    content: $(cat ocp/auth/kubeconfig | base64 | tr -d '\n')
+-   path: /tmp/ignition_endpoint
+    content: $IGNITION_ENDPOINT
 
 users:
   - name: core
@@ -24,7 +24,7 @@ users:
 
 rh_subscription:
   username: $RH_USERNAME
-  password: '$RH_PASSWORD'
+  password: $RH_PASSWORD
   auto-attach: True
 EOF
 
