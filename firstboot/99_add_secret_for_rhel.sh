@@ -28,14 +28,14 @@ rh_subscription:
   auto-attach: True
 EOF
 
-cat << EOF
+cat > rhel-worker-user-data.yaml << EOF
 apiVersion: v1
 data:
   userData: $(base64 -w 0 .cloudinit.tmp)
 kind: Secret
 metadata:
   name: rhel-worker-user-data
-  namespace: metal3
+  namespace: openshift-machine-api
 type: Opaque
 EOF
 
