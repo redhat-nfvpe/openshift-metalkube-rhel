@@ -26,9 +26,30 @@
     state: directory
   register: tempfile
 
+- name: Detect config-2 partition
+  command:  blkid -t LABEL="config-2" -odevice
+  register: disk_blkid
+
+- name: Mount config-drive partition
+  mount:
+    path: /mnt/config
+    src: "{{ disk_blkid.stdout }}"
+    state: mounted 
+    fstype: iso9660
+
+- name: Extract ignition file contents
+  shell: cat /mnt/config/openstack/latest/user_data
+  register: user_data
+
+- set_fact:
+    secrets: "{{ user_data.stdout | from_json }}"
+
+- set_fact:
+    ignition_source: "{{ secrets.ignition.config.append[0].source }}"
+
 - name: Fetch bootstrap ignition file locally
   uri:
-    url: "https://api.test.kni.home:22623/config/worker"
+    url: "{{ ignition_source }}"
     dest: "{{ tempfile.path }}/bootstrap.ign"
     validate_certs: false
 
@@ -36,6 +57,12 @@
   copy:
     src: "/tmp/pull.json"
     dest: "{{ tempfile.path }}/pull-secret.json"
+
+- name: Umount partition
+  mount:
+    path: /mnt/config
+    src: "{{ disk_blkid.stdout }}"
+    state: unmounted
 
 - name: Get release image
   command: >
