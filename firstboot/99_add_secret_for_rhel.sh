@@ -31,6 +31,7 @@ write_files:
         git clone https://github.com/yrobla/openshift-metalkube-rhel
         pushd openshift-metalkube-rhel/ansible
         ansible-playbook play.yml -i localhost,
+        sed -i '/^.*linux16.*/ s/$/ ip=eth0:dhcp ip=eth1:dhcp rd.neednet=1/' /boot/grub2/grub.cfg
         reboot
 
 users:

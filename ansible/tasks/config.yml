@@ -34,7 +34,7 @@
   mount:
     path: /mnt/config
     src: "{{ disk_blkid.stdout }}"
-    state: mounted 
+    state: mounted
     fstype: iso9660
 
 - name: Extract ignition file contents
