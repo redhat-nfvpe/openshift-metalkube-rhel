@@ -14,6 +14,24 @@ write_files:
     content: $(cat ocp/auth/kubeconfig | base64 | tr -d '\n')
 -   path: /tmp/ignition_endpoint
     content: $IGNITION_ENDPOINT
+-   path: /tmp/cloud_init_script.sh
+    content: |
+        #!/bin/bash
+        subscription-manager register --username $RH_USERNAME --password $RH_PASSWORD
+        subscription-manager attach --pool=$RH_POOL
+        subscription-manager repos --enable=rhel-7-server-rpms
+        subscription-manager repos --enable=rhel-7-server-extras-rpms
+        subscription-manager repos --enable=rhel-7-server-rh-common-rpms
+        yum update -y
+        yum -y -t install git epel-release python-setuptools wget
+        pushd /tmp
+        wget https://bootstrap.pypa.io/get-pip.py
+        python get-pip.py
+        pip install ansible
+        git clone https://github.com/yrobla/openshift-metalkube-rhel
+        pushd openshift-metalkube-rhel/ansible
+        ansible-playbook play.yml -i localhost,
+        reboot
 
 users:
   - name: core
@@ -22,10 +40,9 @@ users:
     ssh_authorized_keys:
       - $(cat $HOME/.ssh/id_rsa.pub)
 
-rh_subscription:
-  username: $RH_USERNAME
-  password: $RH_PASSWORD
-  auto-attach: True
+runcmd:
+ - [ bash, /tmp/cloud_init_script.sh ]
+
 EOF
 
 cat > rhel-worker-user-data.yaml << EOF
