@@ -27,18 +27,12 @@
   register: tempfile
 
 - name: Extract ignition file contents
-  shell: cat /mnt/config/openstack/latest/user_data
-  register: user_data
-
-- set_fact:
-    secrets: "{{ user_data.stdout | from_json }}"
-
-- set_fact:
-    ignition_source: "{{ secrets.ignition.config.append[0].source }}"
+  shell: cat /tmp/ignition_endpoint
+  register: ignition_source
 
 - name: Fetch bootstrap ignition file locally
   uri:
-    url: "{{ ignition_source }}"
+    url: "{{ ignition_source.stdout }}"
     dest: "{{ tempfile.path }}/bootstrap.ign"
     validate_certs: false
 
