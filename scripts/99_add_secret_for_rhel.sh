@@ -18,7 +18,8 @@ write_files:
 -   path: /tmp/cloud_init_script.sh
     content: |
         #!/bin/bash
-        subscription-manager register --username $RH_USERNAME --password $RH_PASSWORD
+        set -eux
+        subscription-manager register --username $RH_USERNAME --password $RH_PASSWORD --force
         subscription-manager attach --pool=$RH_POOL
         subscription-manager repos --enable=rhel-7-server-rpms
         subscription-manager repos --enable=rhel-7-server-extras-rpms
@@ -29,6 +30,7 @@ write_files:
         wget https://bootstrap.pypa.io/get-pip.py
         python get-pip.py
         pip install ansible
+        rm -rf openshift-metalkube-rhel
         git clone https://github.com/yrobla/openshift-metalkube-rhel
         pushd openshift-metalkube-rhel/ansible
         ansible-playbook play.yml -i localhost,

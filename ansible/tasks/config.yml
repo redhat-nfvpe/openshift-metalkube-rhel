@@ -26,17 +26,6 @@
     state: directory
   register: tempfile
 
-- name: Detect config-2 partition
-  command:  blkid -t LABEL="config-2" -odevice
-  register: disk_blkid
-
-- name: Mount config-drive partition
-  mount:
-    path: /mnt/config
-    src: "{{ disk_blkid.stdout }}"
-    state: mounted
-    fstype: iso9660
-
 - name: Extract ignition file contents
   shell: cat /mnt/config/openstack/latest/user_data
   register: user_data
@@ -57,12 +46,6 @@
   copy:
     src: "/tmp/pull.json"
     dest: "{{ tempfile.path }}/pull-secret.json"
-
-- name: Umount partition
-  mount:
-    path: /mnt/config
-    src: "{{ disk_blkid.stdout }}"
-    state: unmounted
 
 - name: Get release image
   command: >
