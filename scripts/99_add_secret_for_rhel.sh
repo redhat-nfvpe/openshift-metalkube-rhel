@@ -19,6 +19,7 @@ write_files:
     content: |
         #!/bin/bash
         set -eux
+        dhclient eth1
         subscription-manager register --username $RH_USERNAME --password $RH_PASSWORD --force
         subscription-manager attach --pool=$RH_POOL
         subscription-manager repos --enable=rhel-7-server-rpms
