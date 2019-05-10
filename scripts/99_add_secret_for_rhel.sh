@@ -25,8 +25,10 @@ write_files:
         subscription-manager repos --enable=rhel-7-server-rpms
         subscription-manager repos --enable=rhel-7-server-extras-rpms
         subscription-manager repos --enable=rhel-7-server-rh-common-rpms
+        subscription-manager repos --enable=rhel-7-server-rt-rpms
         yum update -y
         yum -y -t install git epel-release python-setuptools wget
+        yum -y groupinstall RT
         pushd /tmp
         wget https://bootstrap.pypa.io/get-pip.py
         python get-pip.py
