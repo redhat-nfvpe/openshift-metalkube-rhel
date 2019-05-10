@@ -8,7 +8,8 @@ cat > .cloudinit.tmp << EOF
 #cloud-config
 write_files:
 -   path: /tmp/pull.json
-    content: $PULL_SECRET
+    content: $(echo $PULL_SECRET | base64 | tr -d '\n')
+    encoding: b64
 -   path: /root/.kube/config
     encoding: b64
     content: $(cat ocp/auth/kubeconfig | base64 | tr -d '\n')
