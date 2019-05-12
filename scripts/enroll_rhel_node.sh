@@ -1,7 +1,6 @@
 #!/bin/bash
 set -eux
-# give network before starting
-dhclient eth1 || true
+dhclient eth1
 
 # enable subscription
 source /etc/profile.env

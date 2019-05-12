@@ -32,8 +32,10 @@ users:
       - $(cat $HOME/.ssh/id_rsa.pub)
 
 runcmd:
- - [ bash, /tmp/enroll_rhel_node.sh ]
- - [ reboot ]
+ - [ 'bash', '/tmp/enroll_rhel_node.sh', '&&', 'reboot' ]
+
+power_state:
+  delay: "+30
 
 EOF
 
