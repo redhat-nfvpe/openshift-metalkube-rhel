@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eux
 # give network before starting
-dhclient eth1
+dhclient eth1 || true
 
 # enable subscription
 subscription-manager register --username $RH_USERNAME --password $RH_PASSWORD --force

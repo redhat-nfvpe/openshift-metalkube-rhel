@@ -18,6 +18,11 @@ write_files:
 -   path: /tmp/enroll_rhel_node.sh
     encoding: b64
     content: $(cat scripts/enroll_rhel_node.sh | base64 | tr -d '\n')
+-   path: /etc/profile.env
+    content: |
+      export RH_USERNAME="${RH_USERNAME}"
+      export RH_PASSWORD="${RH_PASSWORD}"
+      export RH_POOL="${RH_POOL}"
 
 users:
   - name: core
