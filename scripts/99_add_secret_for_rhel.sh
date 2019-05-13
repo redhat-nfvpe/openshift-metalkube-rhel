@@ -33,10 +33,6 @@ users:
 
 runcmd:
  - [ 'bash', '/tmp/enroll_rhel_node.sh', '&&', 'reboot' ]
-
-power_state:
-  delay: "+30
-
 EOF
 
 cat > rhel-worker-user-data.yaml << EOF
