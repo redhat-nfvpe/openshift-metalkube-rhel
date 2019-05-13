@@ -1,6 +1,6 @@
 #!/bin/bash
 set -eux
-dhclient eth1
+dhclient eth1 || true
 
 # enable subscription
 source /etc/profile.env
@@ -42,8 +42,9 @@ swapoff -a
 sysctl -w net.ipv4.ip_forward=1
 sysctl --system
 
-# set sebool container_manage_cgroup
+# set sebool container_manage_cgroup, disable selinux
 setsebool -P container_manage_cgroup on || true
+setenforce 0
 
 # create temporary directory and extract contents there
 TEMP_DIR=$(mktemp -d)
