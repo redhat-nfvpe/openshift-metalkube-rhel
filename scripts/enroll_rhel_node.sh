@@ -52,7 +52,7 @@ IGNITION_URL=$(cat /tmp/ignition_endpoint )
 curl -k $IGNITION_URL -o $TEMP_DIR/bootstrap.ign
 
 # run release image
-CLUSTER_VERSION=$(oc get clusterversion --config=$HOME/.kube/config --output=jsonpath='{.items[0].status.desired.image}')
+CLUSTER_VERSION=$(oc get clusterversion --config=/root/.kube/config --output=jsonpath='{.items[0].status.desired.image}')
 podman pull --tls-verify=false --authfile /tmp/pull.json $CLUSTER_VERSION
 RELEASE_IMAGE=$(podman run --rm $CLUSTER_VERSION image machine-config-daemon)
 
