@@ -61,5 +61,3 @@ podman pull --tls-verify=false --authfile /tmp/pull.json $RELEASE_IMAGE
 podman run -v /:/rootfs -v /var/run/dbus:/var/run/dbus -v /run/systemd:/run/systemd --privileged --rm -ti $RELEASE_IMAGE start --node-name $HOSTNAME --once-from $TEMP_DIR/bootstrap.ign --skip-reboot
 
 sed -i '/^.*linux16.*/ s/$/ ip=eth0:dhcp ip=eth1:dhcp rd.neednet=1/' /boot/grub2/grub.cfg
-
-reboot

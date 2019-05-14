@@ -33,6 +33,9 @@ users:
 
 runcmd:
  - [ 'bash', '/tmp/enroll_rhel_node.sh' ]
+
+power_state:
+    mode: reboot
 EOF
 
 cat > rhel-worker-user-data.yaml << EOF
