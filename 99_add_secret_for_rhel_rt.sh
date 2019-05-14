@@ -42,13 +42,13 @@ power_state:
     mode: reboot
 EOF
 
-cat > rhel-worker-user-data.yaml << EOF
+cat > rhel-rt-worker-user-data.yaml << EOF
 apiVersion: v1
 data:
   userData: $(base64 -w 0 .cloudinit.tmp)
 kind: Secret
 metadata:
-  name: rhel-worker-user-data
+  name: rhel-rt-worker-user-data
   namespace: openshift-machine-api
 type: Opaque
 EOF
