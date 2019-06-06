@@ -5,6 +5,7 @@ source $HOME/settings.env
 IGNITION_ENDPOINT="https://api.${CLUSTER_NAME}.${BASE_DOMAIN}:22623/config/worker"
 CORE_SSH_KEY=$(cat $HOME/.ssh/id_rsa.pub)
 ENROLL_CENTOS_NODE=$(cat ../scripts/enroll_centos_node.sh)
+KUBECONFIG_FILE=$(cat $KUBECONFIG_PATH)
 
 cat > centos-worker-kickstart.cfg <<EOT
 lang en_US
@@ -13,7 +14,8 @@ timezone Etc/UTC --isUtc
 rootpw --plaintext ${ROOT_PASSWORD}
 reboot
 text
-url --url=${ISO_URL}
+install
+url --url=http://mirror.centos.org/centos/7.6.1810/os/x86_64/
 bootloader --location=mbr --append="rhgb quiet crashkernel=auto"
 zerombr
 clearpart --all --initlabel
@@ -24,7 +26,7 @@ firewall --disabled
 skipx
 firstboot --disable
 user --name=core --groups=wheel
-%post --nochroot --erroronfail --log=/mnt/sysimage/root/ks-post.log
+%post --erroronfail --log=/root/ks-post.log
 
 # Add core ssh key
 mkdir -m0700 /home/core/.ssh
@@ -38,6 +40,16 @@ restorecon -R /home/core/.ssh
 # write pull secret
 cat <<EOF > /tmp/pull.json
 ${PULL_SECRET}
+EOF
+
+# write kubeconfig
+cat <<EOF > /root/.kube/config
+${KUBECONFIG_FILE}
+EOF
+
+# write ignition endpoint
+cat <<EOF /tmp/ignition_endpoint
+${IGNITION_ENDPOINT}
 EOF
 
 # write enroll script
