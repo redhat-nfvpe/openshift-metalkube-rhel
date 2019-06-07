@@ -53,7 +53,7 @@ ${KUBECONFIG_FILE}
 EOF
 
 # write ignition endpoint
-cat <<EOF /tmp/ignition_endpoint
+cat <<EOF > /tmp/ignition_endpoint
 ${IGNITION_ENDPOINT}
 EOF
 
