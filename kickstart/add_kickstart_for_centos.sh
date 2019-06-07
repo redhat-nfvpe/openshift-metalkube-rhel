@@ -37,12 +37,17 @@ chmod 0600 /home/core/.ssh/authorized_keys
 chown -R core:core /home/core/.ssh
 restorecon -R /home/core/.ssh
 
+# enable passwordless sudo for wheel
+echo "wheel   ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers.d/wheel
+sed -i "s/^.*requiretty/#Defaults requiretty/" /etc/sudoers
+
 # write pull secret
 cat <<EOF > /tmp/pull.json
 ${PULL_SECRET}
 EOF
 
 # write kubeconfig
+mkdir -p /root/.kube
 cat <<EOF > /root/.kube/config
 ${KUBECONFIG_FILE}
 EOF
