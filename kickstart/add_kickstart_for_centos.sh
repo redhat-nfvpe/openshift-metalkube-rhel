@@ -13,7 +13,7 @@ keyboard us
 timezone Etc/UTC --isUtc
 rootpw --plaintext ${ROOT_PASSWORD}
 reboot
-text
+cmdline
 install
 url --url=http://mirror.centos.org/centos/7.6.1810/os/x86_64/
 bootloader --location=mbr --append="rhgb quiet crashkernel=auto"
@@ -38,7 +38,7 @@ chown -R core:core /home/core/.ssh
 restorecon -R /home/core/.ssh
 
 # enable passwordless sudo for wheel
-echo "wheel   ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers.d/wheel
+echo "%wheel   ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers.d/wheel
 sed -i "s/^.*requiretty/#Defaults requiretty/" /etc/sudoers
 
 # write pull secret
