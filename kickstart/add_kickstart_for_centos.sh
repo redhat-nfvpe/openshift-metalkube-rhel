@@ -22,7 +22,7 @@ clearpart --all --initlabel
 autopart
 auth --passalgo=sha512 --useshadow
 selinux --disabled
-firewall --disabled
+services --enabled=iptables
 skipx
 firstboot --disable
 user --name=core --groups=wheel
