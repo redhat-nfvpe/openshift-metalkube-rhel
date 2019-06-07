@@ -58,12 +58,12 @@ ${IGNITION_ENDPOINT}
 EOF
 
 # write enroll script
-cat <<EOF > /tmp/enroll_centos_node.sh
+cat <<'EOF' > /tmp/enroll_centos_node.sh
 ${ENROLL_CENTOS_NODE}
 EOF
 
 # execute enroll script
-bash /tmp/enroll_node.sh
+bash /tmp/enroll_centos_node.sh
 %end
 %packages
 @base
