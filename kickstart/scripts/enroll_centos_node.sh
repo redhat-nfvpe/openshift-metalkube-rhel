@@ -5,7 +5,7 @@ dhclient eno2 || true
 # install packages
 yum -y install epel-release
 
-cat > /mnt/sysimage/etc/yum.repos.d/cbs.centos.org_repos_paas7-crio-113-candidate_x86_64_os.repo <<EOL
+cat > /etc/yum.repos.d/cbs.centos.org_repos_paas7-crio-113-candidate_x86_64_os.repo <<EOL
 [cbs.centos.org_repos_paas7-crio-113-candidate_x86_64_os]
 name=added from: https://cbs.centos.org/repos/paas7-crio-113-candidate/x86_64/os
 baseurl=https://cbs.centos.org/repos/paas7-crio-113-candidate/x86_64/os
@@ -13,7 +13,7 @@ enabled=1
 gpgcheck=0
 EOL
 
-cat > /mnt/sysimage/etc/yum.repos.d/rpms.svc.ci.openshift.org_openshift-origin-v4.0_.repo <<EOL
+cat > /etc/yum.repos.d/rpms.svc.ci.openshift.org_openshift-origin-v4.0_.repo <<EOL
 [rpms.svc.ci.openshift.org_openshift-origin-v4.0_]
 name=added from: https://rpms.svc.ci.openshift.org/openshift-origin-v4.0/
 baseurl=https://rpms.svc.ci.openshift.org/openshift-origin-v4.0/
@@ -40,18 +40,23 @@ setsebool -P container_manage_cgroup on || true
 setenforce 0
 
 # create temporary directory and extract contents there
-TEMP_DIR=$(mktemp -d)
-pushd $TEMP_DIR
-IGNITION_URL=$(cat /mnt/sysimage/tmp/ignition_endpoint )
-curl -k $IGNITION_URL -o $TEMP_DIR/bootstrap.ign
+IGNITION_URL=$(cat /tmp/ignition_endpoint )
+curl -k $IGNITION_URL -o /tmp/bootstrap.ign
 
-# run release image
-CLUSTER_VERSION=$(oc get clusterversion --config=/mnt/sysimage/root/.kube/config --output=jsonpath='{.items[0].status.desired.image}')
-podman pull --tls-verify=false --authfile /mnt/sysimage/tmp/pull.json $CLUSTER_VERSION
-RELEASE_IMAGE=$(podman run --rm $CLUSTER_VERSION image machine-config-daemon)
+cat <<EOL > /etc/systemd/system/runignition.service
+[Unit]
+Description=Run ignition commands
+Requires=network-online.target
+After=network-online.target
 
-# run MCD image
-podman pull --tls-verify=false --authfile /mnt/sysimage/tmp/pull.json $RELEASE_IMAGE
-podman run -v /mnt/sysimage/:/rootfs -v /mnt/sysimage/var/run/dbus:/var/run/dbus -v /mnt/sysimage/run/systemd:/run/systemd --privileged --rm -ti $RELEASE_IMAGE start --node-name $HOSTNAME --once-from $TEMP_DIR/bootstrap.ign --skip-reboot
+[Service]
+ExecStart=/tmp/runignition.sh
 
-sed -i '/^.*linux16.*/ s/$/ ip=eno1:dhcp ip=eno2:dhcp rd.neednet=1/' /mnt/sysimage/boot/grub2/grub.cfg
+[Install]
+WantedBy=multi-user.target
+EOL
+
+chmod 664 /etc/systemd/system/runignition.service
+systemctl enable runignition
+
+sed -i '/^.*linux16.*/ s/$/ ip=eno1:dhcp ip=eno2:dhcp rd.neednet=1/' /boot/grub2/grub.cfg
